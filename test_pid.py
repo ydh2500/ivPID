@@ -48,25 +48,25 @@ def test_pid(P = 0.2,  I = 0.0, D= 0.0, L=100):
             time.sleep(0.02)
         ---
     """
-    pid = PID.PID(P, I, D)
+    pid = PID.PID(P, I, D) # 각각의 PID.py의 PID 클래스에 각각의 PID값을 선언한 pid 인스턴스
 
-    pid.SetPoint=0.0
-    pid.setSampleTime(0.01)
+    pid.SetPoint=0.0  # 컨트롤 하고자하는 온도 설정
+    pid.setSampleTime(0.01) # 0.01 초를 샘플링 타임으로 설정. update
 
-    END = L
-    feedback = 0
+    END = L  # 총 몇초간 볼 것인가? 실제 제어 상황이라면 필요 없다.
+    feedback = 0  #  feedback 변수 이것을 온도 센서의 값으로 치환해준다.
 
-    feedback_list = []
-    time_list = []
-    setpoint_list = []
+    feedback_list = [] # 나중에 plot을 하기위한 리스트: 피드백 받은 값을 저장한다.
+    time_list = []  # 가상의 시간축을 형성하는 리스트
+    setpoint_list = [] # 셋팅포인트가 달라지는 시점을 파악하기 위한 리스트
 
-    for i in range(1, END):
-        pid.update(feedback)
-        output = pid.output
-        if pid.SetPoint > 0:
+    for i in range(1, END): # 끝나는 시점까지 루프를 돌린다. 향 후에는 조건버튼을 넣는다.
+        pid.update(feedback) # feedback 인자를 pid 인스턴스에 업데이트한다.
+        output = pid.output # 업데이트 된 pid의 output 변수를 가져온다. 이 변수로 히터를 제어
+        if pid.SetPoint > 0: 
             feedback += (output - (1/i))
         if i>9:
-            pid.SetPoint = 1
+            pid.SetPoint = 3
         time.sleep(0.02)
 
         feedback_list.append(feedback)
@@ -80,20 +80,20 @@ def test_pid(P = 0.2,  I = 0.0, D= 0.0, L=100):
     # Using make_interp_spline to create BSpline
     helper_x3 = make_interp_spline(time_list, feedback_list)
     feedback_smooth = helper_x3(time_smooth)
-
+    
     plt.plot(time_smooth, feedback_smooth)
     plt.plot(time_list, setpoint_list)
-    plt.xlim((0, L))
-    plt.ylim((min(feedback_list)-0.5, max(feedback_list)+0.5))
+#    plt.xlim((0, L))
+#    plt.ylim((min(feedback_list)-0.5, max(feedback_list)+0.5))
     plt.xlabel('time (s)')
     plt.ylabel('PID (PV)')
     plt.title('TEST PID')
 
-    plt.ylim((1-0.5, 1+0.5))
+#    plt.ylim((1-0.5, 1+0.5))
 
     plt.grid(True)
     plt.show()
 
 if __name__ == "__main__":
-    test_pid(1.2, 1, 0.001, L=50)
+    test_pid(0.8, 0.01, 0.001, L=50)
 #    test_pid(0.8, L=50)
