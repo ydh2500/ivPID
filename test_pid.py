@@ -34,20 +34,7 @@ import numpy as np
 from scipy.interpolate import BSpline, make_interp_spline #  Switched to BSpline
 
 def test_pid(P = 0.2,  I = 0.0, D= 0.0, L=100):
-    """Self-test PID class
 
-    .. note::
-        ...
-        for i in range(1, END):
-            pid.update(feedback)
-            output = pid.output
-            if pid.SetPoint > 0:
-                feedback += (output - (1/i))
-            if i>9:
-                pid.SetPoint = 1
-            time.sleep(0.02)
-        ---
-    """
     pid = PID.PID(P, I, D) # 각각의 PID.py의 PID 클래스에 각각의 PID값을 선언한 pid 인스턴스
 
     pid.SetPoint=0.0  # 컨트롤 하고자하는 온도 설정
@@ -64,10 +51,11 @@ def test_pid(P = 0.2,  I = 0.0, D= 0.0, L=100):
         pid.update(feedback) # feedback 인자를 pid 인스턴스에 업데이트한다.
         output = pid.output # 업데이트 된 pid의 output 변수를 가져온다. 이 변수로 히터를 제어
         if pid.SetPoint > 0: 
-            feedback += (output - (1/i))
+            feedback += (output - (1/i)) 
         if i>9:
             pid.SetPoint = 3
-        time.sleep(0.02)
+        time.sleep(0.01)
+
 
         feedback_list.append(feedback)
         setpoint_list.append(pid.SetPoint)
@@ -95,5 +83,5 @@ def test_pid(P = 0.2,  I = 0.0, D= 0.0, L=100):
     plt.show()
 
 if __name__ == "__main__":
-    test_pid(0.8, 0.01, 0.001, L=50)
+    test_pid(1.3, 0.001, 0.0001, L=50)
 #    test_pid(0.8, L=50)
